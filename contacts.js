@@ -17,7 +17,7 @@ const getContactById = async (contactId) => {
   try {
     const data = await listContacts();
     const contact = data.filter(({ id }) => id === contactId);
-    return contact;
+    return contact || null;
   } catch (error) {
     console.log("🚀  error:", error);
   }
@@ -26,10 +26,14 @@ const getContactById = async (contactId) => {
 const removeContact = async (contactId) => {
   try {
     const data = await listContacts();
+    const hasContact = data.filter(({ id }) => id === contactId);
+    if (!hasContact.length) {
+      return [];
+    }
     const newContactsArray = data.filter(({ id }) => id !== contactId);
     const convertToString = JSON.stringify(newContactsArray);
     await fs.writeFile(contactsPath, convertToString, "utf-8");
-    return newContactsArray;
+    return hasContact;
   } catch (error) {
     console.log("🚀  error:", error);
   }
